@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>Özel Sayfa</title>
+<style>
+    body {
+        margin: 0;
+        overflow: hidden;
+        background: #ffe6f2;
+        font-family: Arial, sans-serif;
+        text-align: center;
+    }
+
+    #container {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+    }
+
+    #yesBtn, #noBtn {
+        padding: 15px 30px;
+        font-size: 24px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        position: absolute;
+        transition: 0.3s;
+    }
+
+    #yesBtn {
+        background-color: #ff66a3;
+        color: white;
+        left: 40%;
+        top: 60%;
+    }
+
+    #noBtn {
+        background-color: #999;
+        color: white;
+        left: 55%;
+        top: 60%;
+        position: absolute;
+    }
+
+    #message, #finalMessage {
+        position: absolute;
+        width: 100%;
+        top: 30%;
+        font-size: 40px;
+        font-weight: bold;
+        color: #d1006b;
+        opacity: 0;
+        transition: 1s;
+    }
+
+    /* Çiçek düşme animasyonu */
+    .flower {
+        position: fixed;
+        top: -50px;
+        font-size: 25px;
+        animation: fall linear infinite;
+    }
+
+    @keyframes fall {
+        0% { transform: translateY(-50px); opacity: 1; }
+        100% { transform: translateY(110vh); opacity: 0; }
+    }
+</style>
+</head>
+<body>
+
+<div id="container">
+    <button id="yesBtn">Evet</button>
+    <button id="noBtn">Hayır</button>
+
+    <div id="message">Her çiçek gibi sen de özel, güzel ve zarifsin 🌸</div>
+    <div id="finalMessage">Bu sayfa sadece <b>rafagulnursilvaaa</b>'ya özeldir 💗</div>
+</div>
+
+<script>
+
+let yesBtn = document.getElementById("yesBtn");
+let noBtn = document.getElementById("noBtn");
+let message = document.getElementById("message");
+let finalMessage = document.getElementById("finalMessage");
+
+let size = 1;
+
+yesBtn.onclick = () => {
+    size += 0.3;
+    yesBtn.style.transform = `scale(${size})`;
+
+    // Evet büyüdükçe hayır yok oluyor
+    if (size > 1.5) noBtn.style.opacity = 0;
+    if (size > 2) noBtn.style.display = "none";
+
+    // Evet tüm ekranı kaplarsa
+    if (size >= 6) {
+        yesBtn.style.display = "none";
+        showMessage();
+    }
+};
+
+noBtn.onmouseover = () => {
+    noBtn.style.left = Math.random() * 70 + "%";
+    noBtn.style.top = Math.random() * 70 + "%";
+};
+
+noBtn.onclick = () => {
+    // Her durumda evete basılmış gibi büyüme devam etsin
+    yesBtn.onclick();
+};
+
+function showMessage() {
+    message.style.opacity = 1;
+
+    // Çiçek patlaması
+    for (let i = 0; i < 40; i++) {
+        createFlowerExplosion();
+    }
+
+    // Bir süre sonra final yazısı gelsin
+    setTimeout(() => {
+        message.style.opacity = 0;
+        setTimeout(() => {
+            finalMessage.style.opacity = 1;
+        }, 1500);
+    }, 3000);
+}
+
+// Sürekli çiçek düşsün
+setInterval(() => {
+    createFallingFlower();
+}, 400);
+
+function createFallingFlower() {
+    const flower = document.createElement("div");
+    flower.classList.add("flower");
+    flower.innerHTML = "🌸";
+    flower.style.left = Math.random() * 100 + "vw";
+    flower.style.animationDuration = (3 + Math.random() * 5) + "s";
+    document.body.appendChild(flower);
+
+    setTimeout(() => flower.remove(), 8000);
+}
+
+function createFlowerExplosion() {
+    const flower = document.createElement("div");
+    flower.style.position = "absolute";
+    flower.style.fontSize = "30px";
+    flower.innerHTML = "🌸";
+    flower.style.left = (window.innerWidth / 2) + (Math.random() * 200 - 100) + "px";
+    flower.style.top = (window.innerHeight / 2) + (Math.random() * 200 - 100) + "px";
+    flower.style.opacity = 1;
+    flower.style.transition = "1s";
+    document.body.appendChild(flower);
+
+    setTimeout(() => {
+        flower.style.transform = "translateY(-50px)";
+        flower.style.opacity = 0;
+    }, 100);
+
+    setTimeout(() => flower.remove(), 2000);
+}
+
+</script>
+
+</body>
+</html>
