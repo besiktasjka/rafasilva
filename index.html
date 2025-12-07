@@ -1,169 +1,121 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<title>Özel Sayfa</title>
-<style>
-    body {
-        margin: 0;
-        overflow: hidden;
-        background: #ffe6f2;
-        font-family: Arial, sans-serif;
-        text-align: center;
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Çiçekleri Sever misin?</title>
+  <style>
+    html,body{margin:0;padding:0;height:100%;overflow:hidden;font-family:Inter,system-ui;-webkit-user-select:none;user-select:none;background:#fff9f9}
+    #wrap{width:100%;height:100%;display:flex;justify-content:center;align-items:center;position:relative;overflow:hidden}
+
+    #questionBox{background:white;padding:22px 30px;border-radius:16px;box-shadow:0 10px 35px rgba(0,0,0,0.08);text-align:center;z-index:5}
+    #buttons{margin-top:16px;display:flex;gap:12px;justify-content:center}
+
+    button{padding:12px 20px;font-size:18px;border-radius:10px;border:0;cursor:pointer;font-weight:600;transition:0.15s}
+    #yes{background:#ff9ebe;color:white;}
+    #no{background:#ececec;color:#333;}
+
+    /* Evet büyüdükçe ekranı kaplama */
+    #yes.grow{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:20}
+
+    /* Çiçek düşüş animasyonu */
+    @keyframes fall{
+      0%{transform:translateY(-50px) rotate(0deg);opacity:1 }
+      100%{transform:translateY(110vh) rotate(360deg);opacity:0 }
+    }
+    .fallFlower{
+      position:fixed;top:-40px;font-size:22px;animation:fall linear forwards;pointer-events:none;z-index:1
     }
 
-    #container {
-        position: absolute;
-        width: 100%;
-        height: 100%;
+    /* Patlama çiçekleri */
+    @keyframes boom{
+      0%{transform:scale(0.3);opacity:1}
+      100%{transform:scale(2.5);opacity:0}
+    }
+    .boomFlower{
+      position:fixed;font-size:28px;animation:boom 0.8s ease-out forwards;pointer-events:none;z-index:30
     }
 
-    #yesBtn, #noBtn {
-        padding: 15px 30px;
-        font-size: 24px;
-        border: none;
-        border-radius: 10px;
-        cursor: pointer;
-        position: absolute;
-        transition: 0.3s;
+    #finalText{
+      position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);font-size:26px;font-weight:700;
+      color:#b3004d;text-align:center;opacity:0;z-index:40;transition:0.3s
     }
-
-    #yesBtn {
-        background-color: #ff66a3;
-        color: white;
-        left: 40%;
-        top: 60%;
-    }
-
-    #noBtn {
-        background-color: #999;
-        color: white;
-        left: 55%;
-        top: 60%;
-        position: absolute;
-    }
-
-    #message, #finalMessage {
-        position: absolute;
-        width: 100%;
-        top: 30%;
-        font-size: 40px;
-        font-weight: bold;
-        color: #d1006b;
-        opacity: 0;
-        transition: 1s;
-    }
-
-    /* Çiçek düşme animasyonu */
-    .flower {
-        position: fixed;
-        top: -50px;
-        font-size: 25px;
-        animation: fall linear infinite;
-    }
-
-    @keyframes fall {
-        0% { transform: translateY(-50px); opacity: 1; }
-        100% { transform: translateY(110vh); opacity: 0; }
-    }
-</style>
+  </style>
 </head>
 <body>
+<div id="wrap">
 
-<div id="container">
-    <button id="yesBtn">Evet</button>
-    <button id="noBtn">Hayır</button>
+  <div id="questionBox">
+    <h2>Çiçekleri sever misin?</h2>
+    <div id="buttons">
+      <button id="yes">Evet</button>
+      <button id="no">Hayır</button>
+    </div>
+  </div>
 
-    <div id="message">Her çiçek gibi sen de özel, güzel ve zarifsin 🌸</div>
-    <div id="finalMessage">Bu sayfa sadece <b>rafagulnursilvaaa</b>'ya özeldir 💗</div>
+  <div id="finalText"></div>
+
 </div>
 
 <script>
+let yesBtn=document.getElementById("yes");
+let noBtn=document.getElementById("no");
+let questionBox=document.getElementById("questionBox");
+let finalText=document.getElementById("finalText");
+let growSize=1;
+let exploded=false;
 
-let yesBtn = document.getElementById("yesBtn");
-let noBtn = document.getElementById("noBtn");
-let message = document.getElementById("message");
-let finalMessage = document.getElementById("finalMessage");
+function spawnFallingFlower(){
+  let f=document.createElement("div");
+  f.className="fallFlower";
+  f.innerText="🌸";
+  f.style.left=Math.random()*100+"vw";
+  f.style.animationDuration=(3+Math.random()*3)+"s";
+  document.body.appendChild(f);
+  setTimeout(()=>f.remove(),4000);
+}
+setInterval(spawnFallingFlower,350);
 
-let size = 1;
-
-yesBtn.onclick = () => {
-    size += 0.3;
-    yesBtn.style.transform = `scale(${size})`;
-
-    // Evet büyüdükçe hayır yok oluyor
-    if (size > 1.5) noBtn.style.opacity = 0;
-    if (size > 2) noBtn.style.display = "none";
-
-    // Evet tüm ekranı kaplarsa
-    if (size >= 6) {
-        yesBtn.style.display = "none";
-        showMessage();
-    }
-};
-
-noBtn.onmouseover = () => {
-    noBtn.style.left = Math.random() * 70 + "%";
-    noBtn.style.top = Math.random() * 70 + "%";
-};
-
-noBtn.onclick = () => {
-    // Her durumda evete basılmış gibi büyüme devam etsin
-    yesBtn.onclick();
-};
-
-function showMessage() {
-    message.style.opacity = 1;
-
-    // Çiçek patlaması
-    for (let i = 0; i < 40; i++) {
-        createFlowerExplosion();
-    }
-
-    // Bir süre sonra final yazısı gelsin
-    setTimeout(() => {
-        message.style.opacity = 0;
-        setTimeout(() => {
-            finalMessage.style.opacity = 1;
-        }, 1500);
-    }, 3000);
+function boomFlowers(){
+  for(let i=0;i<40;i++){
+    let b=document.createElement("div");
+    b.className="boomFlower";
+    b.innerText="🌸";
+    b.style.left=(50 + (Math.random()*40-20))+"vw";
+    b.style.top=(50 + (Math.random()*40-20)) + "vh";
+    document.body.appendChild(b);
+    setTimeout(()=>b.remove(),800);
+  }
 }
 
-// Sürekli çiçek düşsün
-setInterval(() => {
-    createFallingFlower();
-}, 400);
+noBtn.onclick=()=>{
+  noBtn.remove(); // hayır her zaman kayboluyor
+};
 
-function createFallingFlower() {
-    const flower = document.createElement("div");
-    flower.classList.add("flower");
-    flower.innerHTML = "🌸";
-    flower.style.left = Math.random() * 100 + "vw";
-    flower.style.animationDuration = (3 + Math.random() * 5) + "s";
-    document.body.appendChild(flower);
+yesBtn.onclick=()=>{
+  // büyüme
+  growSize+=0.35;
+  yesBtn.classList.add("grow");
+  yesBtn.style.transform="translate(-50%,-50%) scale("+growSize+")";
 
-    setTimeout(() => flower.remove(), 8000);
-}
+  // ekranı tamamen kaplayınca patlama
+  if(growSize>8 && !exploded){
+    exploded=true;
+    questionBox.remove();
+    boomFlowers();
 
-function createFlowerExplosion() {
-    const flower = document.createElement("div");
-    flower.style.position = "absolute";
-    flower.style.fontSize = "30px";
-    flower.innerHTML = "🌸";
-    flower.style.left = (window.innerWidth / 2) + (Math.random() * 200 - 100) + "px";
-    flower.style.top = (window.innerHeight / 2) + (Math.random() * 200 - 100) + "px";
-    flower.style.opacity = 1;
-    flower.style.transition = "1s";
-    document.body.appendChild(flower);
+    finalText.innerText="Her çiçek gibi sende özel, güzel ve zarifsin";
+    finalText.style.opacity=1;
 
-    setTimeout(() => {
-        flower.style.transform = "translateY(-50px)";
-        flower.style.opacity = 0;
-    }, 100);
-
-    setTimeout(() => flower.remove(), 2000);
-}
-
+    setTimeout(()=>{
+      finalText.style.opacity=0;
+      setTimeout(()=>{
+        finalText.innerText="Bu sayfa sadece rafagulnursilvaaa'ya özeldir :)";
+        finalText.style.opacity=1;
+      },400);
+    },3000);
+  }
+};
 </script>
 
 </body>
